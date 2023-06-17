@@ -2,6 +2,7 @@ import React from "react";
 import './Chessboard.css';
 import Tile from "../Tile/Tile";
 import { spawn } from "child_process";
+import { act } from "react-dom/test-utils";
 
 const verticalAxis = ["1","2","3","4","5","6","7","8"];
 const horizontalAxis = ["a","b","c","d","e","f","g","h"];
@@ -44,7 +45,34 @@ pieces.push({image : "assets/images/Chess_kdt45.svg", x:4, y:7})
 pieces.push({image : "assets/images/Chess_qlt45.svg", x:3, y:0})
 pieces.push({image : "assets/images/Chess_klt45.svg", x:4, y:0})
 
+let activePiece: HTMLElement | null = null;
 
+function grabPiece(e: React.MouseEvent){
+    const element = e.target as HTMLElement;
+    if(element.classList.contains("chess-piece")){
+        const x = e.clientX-40;
+        const y = e.clientY-40;
+        element.style.position = "absolute";
+        element.style.left = `${x}px`;
+        element.style.top = `${y}px`;
+        activePiece = element;
+    }
+}
+function movePiece(e: React.MouseEvent){
+    const element = e.target as HTMLElement;
+    if(activePiece){
+        const x = e.clientX-40;
+        const y = e.clientY-40;
+        activePiece.style.position = "absolute";
+        activePiece.style.left = `${x}px`;
+        activePiece.style.top = `${y}px`;
+    }
+}
+function dropPiece(e: React.MouseEvent){
+    if(activePiece){
+        activePiece = null;
+    }
+}
 export default function Chessboard(){
     let board = [];
     for(let j=verticalAxis.length-1;j>=0;j--){
@@ -56,10 +84,14 @@ export default function Chessboard(){
                 image = p.image;
             }
         })
-        board.push(<Tile image={image} number = {number}/>)
+        board.push(<Tile key= {`${j},${i}`}image={image} number = {number}/>)
     }
 };
-    return <div id="chessboard">
+    return <div 
+    onMouseDown={e=> grabPiece(e) } 
+    onMouseMove={(e)=> movePiece(e)} 
+    onMouseUp={e=> dropPiece(e)}
+    id="chessboard">
         {board}
     </div>
 };

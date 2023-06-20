@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import './Chessboard.css';
 import Tile from "../Tile/Tile";
 import { spawn } from "child_process";
@@ -45,7 +45,10 @@ pieces.push({image : "assets/images/Chess_kdt45.svg", x:4, y:7})
 pieces.push({image : "assets/images/Chess_qlt45.svg", x:3, y:0})
 pieces.push({image : "assets/images/Chess_klt45.svg", x:4, y:0})
 
-let activePiece: HTMLElement | null = null;
+export default function Chessboard(){
+    const chessboardRef = useRef<HTMLDivElement>(null);
+
+    let activePiece: HTMLElement | null = null;
 
 function grabPiece(e: React.MouseEvent){
     const element = e.target as HTMLElement;
@@ -60,12 +63,37 @@ function grabPiece(e: React.MouseEvent){
 }
 function movePiece(e: React.MouseEvent){
     const element = e.target as HTMLElement;
-    if(activePiece){
+    const chessboard = chessboardRef.current;
+    if(activePiece && chessboard){
+        const minX = (chessboard.offsetLeft-20);
+        const maxX = chessboard.offsetLeft + chessboard.clientWidth-70;
+        const maxY = chessboard.offsetTop + chessboard.clientHeight-70;
+        const minY = (chessboard.offsetTop-20);
         const x = e.clientX-40;
         const y = e.clientY-40;
         activePiece.style.position = "absolute";
-        activePiece.style.left = `${x}px`;
-        activePiece.style.top = `${y}px`;
+
+        // Condition for x movement
+        if(x<minX){
+            activePiece.style.left = `${minX}px`;
+        }
+        else if(x>maxX){
+            activePiece.style.left = `${maxX}px`;
+        }
+        else{
+            activePiece.style.left = `${x}px`;
+        }
+        
+        // Condition for y movement
+        if(y<minY){
+            activePiece.style.top = `${minY}px`;
+        }
+        else if(y>maxY){
+            activePiece.style.top = `${maxY}px`;
+        }
+        else{
+            activePiece.style.top = `${y}px`;
+        }
     }
 }
 function dropPiece(e: React.MouseEvent){
@@ -73,7 +101,7 @@ function dropPiece(e: React.MouseEvent){
         activePiece = null;
     }
 }
-export default function Chessboard(){
+
     let board = [];
     for(let j=verticalAxis.length-1;j>=0;j--){
     for(let i=0;i<horizontalAxis.length;i++){
@@ -91,7 +119,7 @@ export default function Chessboard(){
     onMouseDown={e=> grabPiece(e) } 
     onMouseMove={(e)=> movePiece(e)} 
     onMouseUp={e=> dropPiece(e)}
-    id="chessboard">
+    id="chessboard" ref={chessboardRef}>
         {board}
     </div>
 };

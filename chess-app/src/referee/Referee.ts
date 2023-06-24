@@ -7,6 +7,12 @@ export default class refree{
         if(piece) return true;
         else return false;
     }
+
+    tileIsOccupiedByOpponent(x: number, y: number, boardState: Piece[], team: TeamType): boolean{
+        const piece = boardState.find((p)=> p.x===x && p.y===y && p.team!=team)
+        if(piece) return true;
+        else return false;
+    }
     isValidMove(px: number, py: number, x: number, y: number, type: PieceType, team: TeamType, boardState: Piece[]){
         if(type === PieceType.PAWN){
             const specialRow = (team === TeamType.OUR)? 1: 6;
@@ -19,6 +25,19 @@ export default class refree{
             }
             else if(px===x && y-py=== 1*pawnDirecrion){
                 if(!this.tileIsOccupied(x,y,boardState)){
+                    return true;
+                }
+            }
+            // Attack Logic
+            else if(x-px===1 && y-py === pawnDirecrion){
+                // Attack in upper or bottom left corner
+                if(this.tileIsOccupiedByOpponent(x,y,boardState,team)){
+                    return true;
+                }
+            }
+            else if(x-px===-1 && y-py === pawnDirecrion){
+                // Attack in upper or bottom right corner
+                if(this.tileIsOccupiedByOpponent(x,y,boardState,team)){
                     return true;
                 }
             }

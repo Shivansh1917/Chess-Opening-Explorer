@@ -124,25 +124,45 @@ function dropPiece(e: React.MouseEvent){
     if(activePiece && chessboard){
         const x = Math.floor((e.clientX - chessboard.offsetLeft)/70);
         const y = 7 - Math.floor((e.clientY - chessboard.offsetTop)/70);
-        // Updates Piece Position
-        setPieces(value =>{
-            const pieces = value.map(p=>{
-                if(p.x===gridX && p.y===gridY){
-                    const validMove = referee.isValidMove(gridX, gridY, x,y,p.type, p.team, value);
-                    if(validMove){
-                        p.x=x;
-                        p.y=y;
+
+        const currentPiece = pieces.find((p)=> p.x=== gridX && p.y=== gridY);
+        const attackPiece = pieces.find((p)=> p.x=== x && p.y=== y);
+        if(currentPiece){
+            const validMove = referee.isValidMove(gridX, gridY, x,y,currentPiece.type, currentPiece.team, pieces);
+            if(validMove){
+                // Using reduce function The first parameter is result array and second parameter is the current piece 
+                const updatedPieces = pieces.reduce((results,piece)=>{
+                    if(piece.x=== currentPiece.x && piece.y === currentPiece.y){
+                        piece.x=x; piece.y = y;
+                        results.push(piece);
                     }
-                    else{
-                        activePiece.style.position = 'relative';
-                        activePiece.style.removeProperty('top');
-                        activePiece.style.removeProperty('left');
+                    else if(!(piece.x===x && piece.y===y)){
+                        results.push(piece);
                     }
-                }
-                return p;
-            });
-            return pieces;
-        })
+                    return results;
+                }, [] as Piece[]);
+                setPieces(updatedPieces)
+                // setPieces((value)=>{
+                //     const pieces = value.reduce((results,piece)=>{
+                //         if(piece.x=== currentPiece.x && piece.y === currentPiece.y){
+                //             piece.x=x; piece.y = y;
+                //             results.push(piece);
+                //         }
+                //         else if(!(piece.x===x && piece.y===y)){
+                //             results.push(piece);
+                //         }
+                //         return results;
+                //     }, [] as Piece[]);
+                //     return pieces;
+                // })
+            }
+            else{
+                // Resets Piece Position
+                activePiece.style.position = 'relative';
+                activePiece.style.removeProperty('top');
+                activePiece.style.removeProperty('left');
+            }
+        }
         setActivePiece(null);
     }
 }

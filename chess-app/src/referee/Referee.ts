@@ -13,6 +13,18 @@ export default class refree{
         if(piece) return true;
         else return false;
     }
+
+    isEnPassantMove(px: number, py: number, x: number, y: number, type: PieceType, team: TeamType, boardState: Piece[]){
+        const pawnDirecrion = (team === TeamType.OUR)? 1:-1;
+        if(type=== PieceType.PAWN){
+            if((x-px===1 || x-px===-1 ) && y-py === pawnDirecrion){
+                const piece = boardState.find(p=> p.x === x && p.y=== y-pawnDirecrion && p.enpassant=== true);
+                if(piece) return true;
+            }
+        }
+        return false;
+    }
+
     isValidMove(px: number, py: number, x: number, y: number, type: PieceType, team: TeamType, boardState: Piece[]){
         if(type === PieceType.PAWN){
             const specialRow = (team === TeamType.OUR)? 1: 6;

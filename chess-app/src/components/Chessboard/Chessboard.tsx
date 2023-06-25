@@ -14,6 +14,7 @@ export interface Piece {
     y : number;
     type: PieceType;
     team: TeamType;
+    enpassant?: boolean;
 }
 
 export enum TeamType{
@@ -127,34 +128,51 @@ function dropPiece(e: React.MouseEvent){
 
         const currentPiece = pieces.find((p)=> p.x=== gridX && p.y=== gridY);
         const attackPiece = pieces.find((p)=> p.x=== x && p.y=== y);
+        
         if(currentPiece){
+            const isEnPassantMove = referee.isEnPassantMove(gridX,gridY,x,y,currentPiece.type, currentPiece.team,pieces);
+            const pawnDirecrion = (currentPiece.team === TeamType.OUR)? 1:-1;
             const validMove = referee.isValidMove(gridX, gridY, x,y,currentPiece.type, currentPiece.team, pieces);
-            if(validMove){
+            if(isEnPassantMove){
+                const updatedPieces = pieces.reduce((results,piece)=>{
+                    if(piece.x=== gridX && piece.y === gridY){
+                        piece.enpassant= false;
+
+                        piece.x=x; 
+                        piece.y=y;
+                        results.push(piece);
+                    }else if(!(piece.x===x && piece.y===y-pawnDirecrion)){
+                        if(piece.type=== PieceType.PAWN){
+                            piece.enpassant= false;
+                        }
+                        results.push(piece);
+                    }
+                    return results;
+                }, [] as Piece[])
+                setPieces(updatedPieces)
+            }
+            else if(validMove){
                 // Using reduce function The first parameter is result array and second parameter is the current piece 
                 const updatedPieces = pieces.reduce((results,piece)=>{
-                    if(piece.x=== currentPiece.x && piece.y === currentPiece.y){
+                    if(piece.x=== gridX && piece.y === gridY){
+                        if(Math.abs(gridY-y)===2 && piece.type=== PieceType.PAWN){
+                            piece.enpassant= true;
+                        }
+                        else{
+                            piece.enpassant= false;
+                        }
                         piece.x=x; piece.y = y;
                         results.push(piece);
                     }
                     else if(!(piece.x===x && piece.y===y)){
+                        if(piece.type=== PieceType.PAWN){
+                            piece.enpassant= false;
+                        }
                         results.push(piece);
                     }
                     return results;
                 }, [] as Piece[]);
                 setPieces(updatedPieces)
-                // setPieces((value)=>{
-                //     const pieces = value.reduce((results,piece)=>{
-                //         if(piece.x=== currentPiece.x && piece.y === currentPiece.y){
-                //             piece.x=x; piece.y = y;
-                //             results.push(piece);
-                //         }
-                //         else if(!(piece.x===x && piece.y===y)){
-                //             results.push(piece);
-                //         }
-                //         return results;
-                //     }, [] as Piece[]);
-                //     return pieces;
-                // })
             }
             else{
                 // Resets Piece Position

@@ -3,13 +3,13 @@ import { PieceType, TeamType, Piece } from "../components/Chessboard/Chessboard"
 export default class refree{
     tileIsOccupied(x: number, y: number, boardState: Piece[]): boolean{
         // console.log("Checking if occupied")
-        const piece = boardState.find(p => p.x === x && p.y===y)
+        const piece = boardState.find(p => p.position.x === x && p.position.y===y)
         if(piece) return true;
         else return false;
     }
 
     tileIsOccupiedByOpponent(x: number, y: number, boardState: Piece[], team: TeamType): boolean{
-        const piece = boardState.find((p)=> p.x===x && p.y===y && p.team!=team)
+        const piece = boardState.find((p)=> p.position.x===x && p.position.y===y && p.team!=team)
         if(piece) return true;
         else return false;
     }
@@ -18,7 +18,7 @@ export default class refree{
         const pawnDirecrion = (team === TeamType.OUR)? 1:-1;
         if(type=== PieceType.PAWN){
             if((x-px===1 || x-px===-1 ) && y-py === pawnDirecrion){
-                const piece = boardState.find(p=> p.x === x && p.y=== y-pawnDirecrion && p.enpassant=== true);
+                const piece = boardState.find(p=> p.position.x === x && p.position.y=== y-pawnDirecrion && p.enpassant=== true);
                 if(piece) return true;
             }
         }

@@ -4,14 +4,14 @@ import Tile from "../Tile/Tile";
 import Referee from "../../referee/Referee";
 import { spawn } from "child_process";
 import { act } from "react-dom/test-utils";
+import { Position } from "../../Constant";
 
 const verticalAxis = ["1","2","3","4","5","6","7","8"];
 const horizontalAxis = ["a","b","c","d","e","f","g","h"];
 
 export interface Piece {
     image : string;
-    x : number;
-    y : number;
+    position: Position;
     type: PieceType;
     team: TeamType;
     enpassant?: boolean;
@@ -32,41 +32,41 @@ export enum PieceType{
 }
 
 const pieces : Piece[] = [];
-
 const initialBoardState: Piece[] = [];
+
+
 for(let i=0;i<8;i++){
-    initialBoardState.push({image : "assets/images/Chess_plt45.svg", x:i, y:1, type: PieceType.PAWN, team: TeamType.OUR})
-    initialBoardState.push({image : "assets/images/Chess_pdt45.svg", x:i, y:6, type: PieceType.PAWN, team: TeamType.OPPONENT})
+    initialBoardState.push({image : "assets/images/Chess_plt45.svg", position:{x:i, y:1,}, type: PieceType.PAWN, team: TeamType.OUR})
+    initialBoardState.push({image : "assets/images/Chess_pdt45.svg", position:{x:i, y:6,}, type: PieceType.PAWN, team: TeamType.OPPONENT})
 }
 
 // Rooks
-initialBoardState.push({image : "assets/images/Chess_rdt45.svg", x:0, y:7, type: PieceType.ROOK, team: TeamType.OPPONENT})
-initialBoardState.push({image : "assets/images/Chess_rdt45.svg", x:7, y:7, type: PieceType.ROOK, team: TeamType.OPPONENT})
-initialBoardState.push({image : "assets/images/Chess_rlt45.svg", x:0, y:0, type: PieceType.ROOK, team: TeamType.OUR})
-initialBoardState.push({image : "assets/images/Chess_rlt45.svg", x:7, y:0, type: PieceType.ROOK, team: TeamType.OUR})
+initialBoardState.push({image : "assets/images/Chess_rdt45.svg", position:{x:0, y:7,}, type: PieceType.ROOK, team: TeamType.OPPONENT})
+initialBoardState.push({image : "assets/images/Chess_rdt45.svg", position:{x:7, y:7,}, type: PieceType.ROOK, team: TeamType.OPPONENT})
+initialBoardState.push({image : "assets/images/Chess_rlt45.svg", position:{x:0, y:0,}, type: PieceType.ROOK, team: TeamType.OUR})
+initialBoardState.push({image : "assets/images/Chess_rlt45.svg", position:{x:7, y:0,}, type: PieceType.ROOK, team: TeamType.OUR})
 
 // Knights
-initialBoardState.push({image : "assets/images/Chess_ndt45.svg", x:1, y:7, type: PieceType.KNIGHT, team: TeamType.OPPONENT})
-initialBoardState.push({image : "assets/images/Chess_ndt45.svg", x:6, y:7, type: PieceType.KNIGHT, team: TeamType.OPPONENT})
-initialBoardState.push({image : "assets/images/Chess_nlt45.svg", x:1, y:0, type: PieceType.KNIGHT, team: TeamType.OUR})
-initialBoardState.push({image : "assets/images/Chess_nlt45.svg", x:6, y:0, type: PieceType.KNIGHT, team: TeamType.OUR})
+initialBoardState.push({image : "assets/images/Chess_ndt45.svg", position:{x:1, y:7,}, type: PieceType.KNIGHT, team: TeamType.OPPONENT})
+initialBoardState.push({image : "assets/images/Chess_ndt45.svg", position:{x:6, y:7,}, type: PieceType.KNIGHT, team: TeamType.OPPONENT})
+initialBoardState.push({image : "assets/images/Chess_nlt45.svg", position:{x:1, y:0,}, type: PieceType.KNIGHT, team: TeamType.OUR})
+initialBoardState.push({image : "assets/images/Chess_nlt45.svg", position:{x:6, y:0,}, type: PieceType.KNIGHT, team: TeamType.OUR})
 
 // Bishops
-initialBoardState.push({image : "assets/images/Chess_bdt45.svg", x:2, y:7, type: PieceType.BISHOP, team: TeamType.OPPONENT})
-initialBoardState.push({image : "assets/images/Chess_bdt45.svg", x:5, y:7, type: PieceType.BISHOP, team: TeamType.OPPONENT})
-initialBoardState.push({image : "assets/images/Chess_blt45.svg", x:2, y:0, type: PieceType.BISHOP, team: TeamType.OUR})
-initialBoardState.push({image : "assets/images/Chess_blt45.svg", x:5, y:0, type: PieceType.BISHOP, team: TeamType.OUR})
+initialBoardState.push({image : "assets/images/Chess_bdt45.svg", position:{x:2, y:7,}, type: PieceType.BISHOP, team: TeamType.OPPONENT})
+initialBoardState.push({image : "assets/images/Chess_bdt45.svg", position:{x:5, y:7,}, type: PieceType.BISHOP, team: TeamType.OPPONENT})
+initialBoardState.push({image : "assets/images/Chess_blt45.svg", position:{x:2, y:0,}, type: PieceType.BISHOP, team: TeamType.OUR})
+initialBoardState.push({image : "assets/images/Chess_blt45.svg", position:{x:5, y:0,}, type: PieceType.BISHOP, team: TeamType.OUR})
 
 // Queens and kings
-initialBoardState.push({image : "assets/images/Chess_qdt45.svg", x:3, y:7, type: PieceType.QUEEN, team: TeamType.OPPONENT})
-initialBoardState.push({image : "assets/images/Chess_kdt45.svg", x:4, y:7, type: PieceType.KING, team: TeamType.OPPONENT})
-initialBoardState.push({image : "assets/images/Chess_qlt45.svg", x:3, y:0, type: PieceType.QUEEN, team: TeamType.OUR})
-initialBoardState.push({image : "assets/images/Chess_klt45.svg", x:4, y:0, type: PieceType.KING, team: TeamType.OUR})
+initialBoardState.push({image : "assets/images/Chess_qdt45.svg", position:{x:3, y:7,}, type: PieceType.QUEEN, team: TeamType.OPPONENT})
+initialBoardState.push({image : "assets/images/Chess_kdt45.svg", position:{x:4, y:7,}, type: PieceType.KING, team: TeamType.OPPONENT})
+initialBoardState.push({image : "assets/images/Chess_qlt45.svg", position:{x:3, y:0,}, type: PieceType.QUEEN, team: TeamType.OUR})
+initialBoardState.push({image : "assets/images/Chess_klt45.svg", position:{x:4, y:0,}, type: PieceType.KING, team: TeamType.OUR})
 
 export default function Chessboard(){
     const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
-    const [gridX,setGridX] = useState(0);
-    const [gridY,setGridY] = useState(0);
+    const [grabPosition, setGrabPosition] = useState<Position>({x:-1,y:-1});
     const [pieces, setPieces] = useState<Piece[]>(initialBoardState)
     const chessboardRef = useRef<HTMLDivElement>(null);
     const referee = new Referee();
@@ -75,8 +75,9 @@ function grabPiece(e: React.MouseEvent){
     const chessboard = chessboardRef.current;
     const element = e.target as HTMLElement;
     if(element.classList.contains("chess-piece") && chessboard){
-        setGridX(Math.floor((e.clientX - chessboard.offsetLeft)/70));
-        setGridY(7 - Math.floor((e.clientY - chessboard.offsetTop)/70));
+        const grabX = Math.floor((e.clientX - chessboard.offsetLeft)/70);
+        const grabY = 7 - Math.floor((e.clientY - chessboard.offsetTop)/70);
+        setGrabPosition({x: grabX,y: grabY});
         const x = e.clientX-40;
         const y = e.clientY-40;
         element.style.position = "absolute";
@@ -126,22 +127,22 @@ function dropPiece(e: React.MouseEvent){
         const x = Math.floor((e.clientX - chessboard.offsetLeft)/70);
         const y = 7 - Math.floor((e.clientY - chessboard.offsetTop)/70);
 
-        const currentPiece = pieces.find((p)=> p.x=== gridX && p.y=== gridY);
-        const attackPiece = pieces.find((p)=> p.x=== x && p.y=== y);
+        const currentPiece = pieces.find((p)=> p.position.x=== grabPosition.x && p.position.y=== grabPosition.y);
+        const attackPiece = pieces.find((p)=> p.position.x=== x && p.position.y=== y);
         
         if(currentPiece){
-            const isEnPassantMove = referee.isEnPassantMove(gridX,gridY,x,y,currentPiece.type, currentPiece.team,pieces);
+            const isEnPassantMove = referee.isEnPassantMove(grabPosition.x,grabPosition.y,x,y,currentPiece.type, currentPiece.team,pieces);
             const pawnDirecrion = (currentPiece.team === TeamType.OUR)? 1:-1;
-            const validMove = referee.isValidMove(gridX, gridY, x,y,currentPiece.type, currentPiece.team, pieces);
+            const validMove = referee.isValidMove(grabPosition.x, grabPosition.y, x,y,currentPiece.type, currentPiece.team, pieces);
             if(isEnPassantMove){
                 const updatedPieces = pieces.reduce((results,piece)=>{
-                    if(piece.x=== gridX && piece.y === gridY){
+                    if(piece.position.x=== grabPosition.x && piece.position.y === grabPosition.y){
                         piece.enpassant= false;
 
-                        piece.x=x; 
-                        piece.y=y;
+                        piece.position.x=x; 
+                        piece.position.y=y;
                         results.push(piece);
-                    }else if(!(piece.x===x && piece.y===y-pawnDirecrion)){
+                    }else if(!(piece.position.x===x && piece.position.y===y-pawnDirecrion)){
                         if(piece.type=== PieceType.PAWN){
                             piece.enpassant= false;
                         }
@@ -154,17 +155,17 @@ function dropPiece(e: React.MouseEvent){
             else if(validMove){
                 // Using reduce function The first parameter is result array and second parameter is the current piece 
                 const updatedPieces = pieces.reduce((results,piece)=>{
-                    if(piece.x=== gridX && piece.y === gridY){
-                        if(Math.abs(gridY-y)===2 && piece.type=== PieceType.PAWN){
+                    if(piece.position.x=== grabPosition.x && piece.position.y === grabPosition.y){
+                        if(Math.abs(grabPosition.y-y)===2 && piece.type=== PieceType.PAWN){
                             piece.enpassant= true;
                         }
                         else{
                             piece.enpassant= false;
                         }
-                        piece.x=x; piece.y = y;
+                        piece.position.x=x; piece.position.y = y;
                         results.push(piece);
                     }
-                    else if(!(piece.x===x && piece.y===y)){
+                    else if(!(piece.position.x===x && piece.position.y===y)){
                         if(piece.type=== PieceType.PAWN){
                             piece.enpassant= false;
                         }
@@ -191,7 +192,7 @@ function dropPiece(e: React.MouseEvent){
         const number = j+i;
         let image = undefined;
         pieces.forEach(p=>{
-            if(p.x === i && p.y=== j){
+            if(p.position.x === i && p.position.y=== j){
                 image = p.image;
             }
         })

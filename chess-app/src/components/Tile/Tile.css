@@ -1,35 +1,34 @@
-.tile{
-    width : 10vh;
-    height: 10vh;
+.tile {
     display: grid;
     place-content: center;
+    width: 100px;
+    height: 100px;
 }
 
-.tile .chess-piece{
-    width : 10vh;
-    height: 10vh;
+.tile .chess-piece {
+    width: 100px;
+    height: 100px;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 8vh;
+    background-size: 80px;
 }
 
-.tile .chess-piece:hover{
+.tile .chess-piece:hover {
     cursor: grab;
 }
 
-.tile .chess-piece:active{
+.tile .chess-piece:active {
     cursor: grabbing;
 }
 
-.black-tile{
-    background-color: #779556 ;
-    /* background-color: purple; */
+.black-tile {
+    background-color: #779556;
 }
 
-.white-tile{
+.white-tile {
     background-color: #ebecd0;
 }
 
-.tile .chess-piece-image{
-    width: 8vh;
+.tile img {
+    width: 80px;
 }
